@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Dark mode (default) ─────────────────────────────────────────────────── */
+:root {
+  --ink:            #0D1B2E;
+  --surface:        #132240;
+  --surface-raised: #1B2E52;
+  --surface-line:   #263D6B;
+  --paper:          #EEF2F9;
+  --muted:          #7A90B5;
+  --blue:           #4A8FE7;
+  --blue-dim:       #1B3668;
+  --blue-glow:      #7DB3EF;
+}
+
+/* ── Light mode — Near East University logo colours ─────────────────────── */
+/*    White background · NEU navy #1B3668 · NEU red #C8102E                 */
+:root.light {
+  --ink:            #FFFFFF;       /* pure white — logo background           */
+  --surface:        #F0F4FF;       /* very light NEU-blue tint for cards     */
+  --surface-raised: #DDE6F8;       /* slightly deeper for hover / elevated   */
+  --surface-line:   #B8CAE8;       /* border colour — NEU navy at low opacity*/
+  --paper:          #1B3668;       /* NEU navy — main text                   */
+  --muted:          #4A6080;       /* softer navy for secondary text         */
+  --blue:           #1B3668;       /* NEU navy — buttons, active nav         */
+  --blue-dim:       #0F2040;       /* darker navy for hover states           */
+  --blue-glow:      #2E5090;       /* mid-navy for glow / focus ring         */
+}
+
+/* ── Base styles ─────────────────────────────────────────────────────────── */
+@layer base {
+  body {
+    background-color: var(--ink);
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Dark mode radial gradients */
+  :root:not(.light) body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74,143,231,0.10), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(212,160,23,0.06), transparent);
+    background-attachment: fixed;
+  }
+
+  /* Light mode — subtle NEU navy glow at top, red hint at bottom-right */
+  :root.light body {
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -5%, rgba(27,54,104,0.07), transparent),
+      radial-gradient(ellipse 50% 35% at 100% 100%, rgba(200,16,46,0.04), transparent);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: rgba(27, 54, 104, 0.20);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ── Component utilities ─────────────────────────────────────────────────── */
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-surface-line bg-ink px-3 py-2 text-sm text-paper outline-none transition-colors;
+  }
+  .input:focus {
+    border-color: var(--blue);
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

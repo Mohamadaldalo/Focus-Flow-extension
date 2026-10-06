@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FocusFlow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@500&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="popup.css"/>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── LOGIN VIEW ─────────────────────────────────────────────────────── -->
+  <div id="loginView" class="view" style="display:none">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14.5" stroke="#4A8FE7" stroke-width="1.5" opacity="0.4"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(45 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(90 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(135 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(180 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(225 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(270 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(315 16 16)"/>
+        <circle cx="16" cy="16" r="4.5" fill="#4A8FE7"/>
+      </svg>
+      <span class="brand-name">FocusFlow</span>
+    </div>
+    <p class="hint">Log in to sync with the FocusFlow app.</p>
+    <input type="password" id="passwordInput" placeholder="Master password" autocomplete="current-password"/>
+    <p id="loginError" class="error" style="display:none"></p>
+    <button id="loginBtn" class="btn-primary">Log in</button>
+  </div>
+
+  <!-- ── EXAM VIEW (locked — no controls) ───────────────────────────────── -->
+  <div id="examView" class="view" style="display:none">
+    <div class="exam-banner">
+      <span class="exam-dot"></span>
+      EXAM IN PROGRESS
+    </div>
+
+    <!-- Ring timer -->
+    <div class="ring-wrap">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="44" fill="none" stroke="#1B2E52" stroke-width="6"/>
+        <circle id="examArc" cx="50" cy="50" r="44" fill="none"
+          stroke="#C8102E" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="276.46" stroke-dashoffset="276.46"
+          transform="rotate(-90 50 50)"
+          style="transition:stroke-dashoffset 1s linear"/>
+      </svg>
+      <div class="ring-center">
+        <span id="examTime" class="exam-time">--:--</span>
+        <span class="ring-sub">remaining</span>
+      </div>
+    </div>
+
+    <p class="exam-locked-msg">
+      🔒 Session locked by supervisor.<br/>You cannot stop this exam.
+    </p>
+
+    <div class="allowlist-wrap">
+      <p class="allowlist-label">Allowed sites</p>
+      <ul id="examAllowedList" class="allowlist"></ul>
+    </div>
+  </div>
+
+  <!-- ── SESSION VIEW ───────────────────────────────────────────────────── -->
+  <div id="sessionView" class="view" style="display:none">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14.5" stroke="#4A8FE7" stroke-width="1.5" opacity="0.4"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(90 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(180 16 16)"/>
+        <line x1="16" y1="6" x2="16" y2="11" stroke="#4A8FE7" stroke-width="2" stroke-linecap="round" transform="rotate(270 16 16)"/>
+        <circle cx="16" cy="16" r="4.5" fill="#4A8FE7"/>
+      </svg>
+      <span class="brand-name">FocusFlow</span>
+      <button id="logoutBtn" class="logout-btn" title="Log out">✕</button>
+    </div>
+
+    <div id="activeBlock" style="display:none">
+      <div class="session-badge">SESSION ACTIVE</div>
+      <div class="time-display" id="popupTime">--:--</div>
+      <div class="time-sub">remaining</div>
+      <div class="allowlist-wrap">
+        <p class="allowlist-label">Sites you can visit</p>
+        <ul id="allowlistItems" class="allowlist"></ul>
+      </div>
+    </div>
+
+    <div id="idleBlock">
+      <div class="idle-text">No session running.</div>
+      <p class="hint">Start a session in the FocusFlow app.</p>
+      <a href="http://localhost:5173" target="_blank" class="btn-primary">
+        Open FocusFlow ↗
+      </a>
+    </div>
+  </div>
+
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

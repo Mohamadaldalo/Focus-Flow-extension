@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FocusFlow – Blocked</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=JetBrains+Mono:wght@500&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#0D1B2E;}
+    body.exam-mode{background-image:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(200,16,46,0.12),transparent);}
+    body.focus-mode{background-image:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(74,143,231,0.08),transparent);}
+    .card{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+    .badge{display:inline-flex;align-items:center;gap:6px;border-radius:100px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:28px;}
+    .badge.exam{background:rgba(200,16,46,.15);border:1px solid rgba(200,16,46,.4);color:#E8455A;}
+    .badge.focus{background:rgba(74,143,231,.15);border:1px solid rgba(74,143,231,.4);color:#7DB3EF;}
+    .badge-dot{width:7px;height:7px;border-radius:50%;animation:ping 1.5s ease-in-out infinite;}
+    .badge.exam .badge-dot{background:#C8102E;}
+    .badge.focus .badge-dot{background:#4A8FE7;}
+    @keyframes ping{0%,100%{opacity:1}50%{opacity:.3}}
+    .ring-wrap{position:relative;width:220px;height:220px;margin-bottom:28px;}
+    .ring-wrap svg{width:100%;height:100%;}
+    .timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+    .time{font-family:'JetBrains Mono',monospace;font-size:2.4rem;font-weight:500;font-variant-numeric:tabular-nums;line-height:1;}
+    .time.exam-color{color:#E8455A;}
+    .time.focus-color{color:#4A8FE7;}
+    .sublabel{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7A90B5;}
+    h1{font-family:'Fraunces',serif;font-size:1.7rem;color:#EEF2F9;line-height:1.2;margin-bottom:10px;}
+    .sub{font-size:.875rem;color:#7A90B5;line-height:1.6;margin-bottom:20px;}
+    .attempted{font-family:'JetBrains Mono',monospace;font-size:.72rem;border-radius:8px;padding:6px 14px;margin-bottom:24px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .attempted.exam{background:rgba(200,16,46,.08);border:1px solid rgba(200,16,46,.25);color:#E8455A;}
+    .attempted.focus{background:rgba(74,143,231,.08);border:1px solid rgba(74,143,231,.25);color:#7DB3EF;}
+    .warning{width:100%;background:rgba(200,16,46,.1);border:1px solid rgba(200,16,46,.3);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:.82rem;color:#E8455A;line-height:1.5;}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid #263D6B;color:#7A90B5;font-size:.8rem;padding:8px 18px;border-radius:8px;cursor:pointer;text-decoration:none;transition:color .2s,border-color .2s;}
+    .back-btn:hover{color:#EEF2F9;border-color:#4A6080;}
+    .track{fill:none;stroke:#1B2E52;stroke-width:10;}
+    .arc{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .4s;}
+    .arc.exam-arc{stroke:#C8102E;}
+    .arc.focus-arc{stroke:#4A8FE7;}
+  </style>
+</head>
+<body>
+<div class="card">
+  <div id="badge" class="badge"><span class="badge-dot"></span><span id="badge-text">EXAM IN PROGRESS</span></div>
+  <div class="ring-wrap">
+    <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+      <circle class="track" cx="110" cy="110" r="90"/>
+      <circle class="arc" id="arc" cx="110" cy="110" r="90" stroke-dasharray="565.49" stroke-dashoffset="565.49" transform="rotate(-90 110 110)"/>
+    </svg>
+    <div class="timer-center">
+      <span class="time" id="timeDisplay">--:--</span>
+      <span class="sublabel">remaining</span>
+    </div>
+  </div>
+  <h1 id="heading">This site is blocked.</h1>
+  <p class="sub" id="subtext">Stay focused — you can do this.</p>
+  <div class="attempted" id="attemptedUrl"></div>
+  <div class="warning" id="warningBox" style="display:none">⚠️ This blocked-site attempt has been <strong>logged</strong> and will be visible to your supervisor.</div>
+  <a href="javascript:history.back()" class="back-btn">← Go back</a>
+</div>
+<script>
+  const CIRC = 2 * Math.PI * 90;
+  function parseParams() {
+    const p = new URLSearchParams(location.search);
+    return { attempted: p.get('attempted')||'', isExam: p.get('isExam')==='1', plannedMinutes: parseInt(p.get('plannedMinutes')||'0',10), startTime: p.get('startTime')||'', pausedSeconds: parseInt(p.get('pausedSeconds')||'0',10), remainingSeconds: parseInt(p.get('remainingSeconds')||'0',10) };
+  }
+  const params = parseParams();
+  const isExam = params.isExam;
+  document.body.classList.add(isExam ? 'exam-mode' : 'focus-mode');
+  document.getElementById('badge').classList.add(isExam ? 'exam' : 'focus');
+  document.getElementById('badge-text').textContent = isExam ? 'EXAM IN PROGRESS' : 'FOCUS SESSION ACTIVE';
+  document.getElementById('arc').classList.add(isExam ? 'exam-arc' : 'focus-arc');
+  document.getElementById('timeDisplay').classList.add(isExam ? 'exam-color' : 'focus-color');
+  document.getElementById('heading').textContent = isExam ? 'This site is blocked during your exam.' : 'You are in a Focus Session.';
+  document.getElementById('subtext').textContent = isExam ? 'All non-approved sites are restricted. Return to your exam.' : 'Only your allowed sites are accessible right now.';
+  if (isExam) document.getElementById('warningBox').style.display = 'block';
+  const urlEl = document.getElementById('attemptedUrl');
+  urlEl.classList.add(isExam ? 'exam' : 'focus');
+  try { const u = new URL(params.attempted); urlEl.textContent = u.hostname + u.pathname.slice(0,30) + (u.pathname.length>30?'…':''); } catch { urlEl.textContent = params.attempted.slice(0,50)||'unknown site'; }
+  urlEl.title = params.attempted;
+  let startRemaining = isExam && params.remainingSeconds > 0 ? params.remainingSeconds : (() => { if (!params.startTime) return 0; const startMs = new Date(params.startTime+'Z').getTime(); const elapsed = (Date.now()-startMs)/1000 - params.pausedSeconds; return Math.max(0, params.plannedMinutes*60 - elapsed); })();
+  const startTs = Date.now();
+  function fmt(s) { s=Math.max(0,Math.round(s)); const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60; return h>0?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; }
+  function tick() { const elapsed=(Date.now()-startTs)/1000; const current=Math.max(0,startRemaining-elapsed); const total=params.plannedMinutes*60; const progress=total>0?1-(current/total):0; document.getElementById('timeDisplay').textContent=current<=0?(isExam?'Exam over':'Done!'):fmt(current); document.getElementById('arc').style.strokeDashoffset=CIRC*(1-progress); }
+  tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>
