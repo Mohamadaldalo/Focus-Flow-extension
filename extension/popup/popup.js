@@ -1,11 +1,3 @@
-/**
- * extension/popup/popup.js  ← REPLACE your existing popup.js
- *
- * Changes:
- *   - Exam mode: shows a locked view with timer, violation count, no controls
- *   - Regular session: unchanged
- *   - Idle: login or "open app" as before
- */
 
 const API_BASE = "http://localhost:8000";
 let tickInterval = null;
