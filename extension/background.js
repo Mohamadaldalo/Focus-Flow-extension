@@ -1,10 +1,3 @@
-/**
- * extension/background.js  ← REPLACE your existing background.js
- *
- * Added: chrome.runtime.setUninstallURL + onSuspend detection
- * When the extension is removed or disabled during an active exam,
- * a violation is logged immediately to the backend.
- */
 
 const API_BASE = "http://localhost:8000";
 const ALARM_NAME = "focusflow-poll";
